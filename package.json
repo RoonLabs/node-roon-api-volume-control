@@ -1,5 +1,5 @@
 {
-  "name": "roon-api-volume-control",
+  "name": "node-roon-api-volume-control",
   "version": "1.0.0",
   "description": "Roon Api Volume Control Service (com.roonlabs.volumecontrol:1)",
   "main": "lib.js",

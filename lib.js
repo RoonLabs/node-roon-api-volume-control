@@ -10,20 +10,20 @@ function RoonApiVolumeControl(roon, opts) {
                 subscribe_name:   "subscribe_controls",
                 unsubscribe_name: "unsubscribe_controls",
                 start: (req) => {
-                    req.send_continue("Subscribed", { volume_controls: this._objs.reduce((p,e) => p.push(e.data.state) && p, []) });
+                    req.send_continue("Subscribed", { controls: this._objs.reduce((p,e) => p.push(e.state) && p, []) });
                 }
             }
         ],
         methods: {
             get_all: (req) => {
-                req.send_complete("Success", { volume_controls: this._objs.reduce((p,e) => p.push(e.data.state) && p, []) });
+                req.send_complete("Success", { controls: this._objs.reduce((p,e) => p.push(e.state) && p, []) });
             },
             set_volume: (req) => {
-                var d = this._objs[req.body.key].data;
+                var d = this._objs[req.body.key];
                 d.set_volume(req, req.body.mode, req.body.value);
             },
             set_mute: (req) => {
-                var d = this._objs[req.body.key].data;
+                var d = this._objs[req.body.key];
                 d.set_mute(req, req.body.action);
             }
         }
@@ -35,7 +35,7 @@ function RoonApiVolumeControl(roon, opts) {
 RoonApiVolumeControl.prototype.new_device = function(o) {
     o.state.key = this._id++;
     this._objs[o.state.key] = o;
-    this._svc.send_continue_all('subscribe', "Changed", { controls_added: [ o.state ] });
+    this._svc.send_continue_all('subscribe_controls', "Changed", { controls_added: [ o.state ] });
     return {
         destroy: () => {
             this._svc.send_continue_all('subscribe_controls', "Changed", { controls_removed: [ o.key ] });
@@ -43,7 +43,7 @@ RoonApiVolumeControl.prototype.new_device = function(o) {
         },
         update_state: (state) => {
             for (let x in state) if (o.state[x] !== state[x]) o.state[x] = state[x];
-            _svc.send_continue_all('subscribe_controls', "Changed", { controls_changed: [ o.state ] });
+            this._svc.send_continue_all('subscribe_controls', "Changed", { controls_changed: [ o.state ] });
         }
     }
 };

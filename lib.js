@@ -23,7 +23,7 @@ function RoonApiVolumeControl(roon, opts) {
             },
             set_mute: (req) => {
                 var d = this._objs[req.body.control_key];
-                d.set_mute(req, req.body.action);
+                d.set_mute(req, req.body.mode);
             }
         }
     });
